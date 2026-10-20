@@ -1,14 +1,45 @@
 {
   "manifest_version": 3,
-  "name": "Otaku Tab",
-  "description": "Customize your new tab with wallpapers, shortcuts, widgets, and animations.",
-  "version": "1.0.0",
+  "name": "Otaku Tab - Aesthetic Theme & Music Studio",
+  "description": "Customize your new tab with wallpapers, widgets for Gamers, Traders & Corporate, and background YouTube music controller.",
+  "version": "1.1.0",
 
   "permissions": [
     "storage",
     "bookmarks",
-    "favicon"
+    "favicon",
+    "tabs",
+    "scripting"
   ],
+
+  "host_permissions": [
+    "*://*.youtube.com/*",
+    "*://api.binance.com/*",
+    "*://api.coingecko.com/*",
+    "*://api.open-meteo.com/*"
+  ],
+
+  "background": {
+    "service_worker": "background.js"
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["*://*.youtube.com/*"],
+      "js": ["content_youtube.js"],
+      "run_at": "document_idle"
+    }
+  ],
+
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Otaku Tab Controls",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
 
   "chrome_url_overrides": {
     "newtab": "newTab.html"
@@ -22,7 +53,7 @@
 
   "web_accessible_resources": [
     {
-      "resources": ["default.jpg"],
+      "resources": ["default.jpg", "default1.png"],
       "matches": ["<all_urls>"]
     }
   ]

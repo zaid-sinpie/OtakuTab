@@ -1,53 +1,154 @@
 <!doctype html>
-<html>
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
-
-    <title>Anime New Tab</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Otaku Tab - Aesthetic Theme & Music Studio</title>
     <link rel="stylesheet" href="newTab.css" />
   </head>
 
-  <body>
+  <body class="persona-otaku">
     <div id="overlay"></div>
 
+    <!-- Background Particle Canvas -->
     <canvas id="particles"></canvas>
 
-    <button class="edit-btn">⚙ Customize</button>
+    <!-- Top Floating Bar: Weather, Search & Controls -->
+    <header class="top-nav-bar">
+      <!-- Weather Widget Mount -->
+      <div id="weather-widget-mount"></div>
 
-    <div class="panel">
-      <h3>Wallpaper</h3>
+      <!-- Center Search Omnibox Mount -->
+      <div id="search-bar-mount"></div>
 
-      <input type="file" id="bgUpload" />
+      <!-- Top Right Controls -->
+      <div class="top-actions">
+        <!-- Quick Persona Switcher Pill -->
+        <div class="persona-switcher-pill">
+          <button class="pill-btn" data-persona="gamer" title="Gamer HUD">
+            <svg class="lucide" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" x2="10" y1="12" y2="12"/><line x1="8" x2="8" y1="10" y2="14"/><line x1="15" x2="15.01" y1="13" y2="13"/><line x1="18" x2="18.01" y1="11" y2="11"/><rect width="20" height="12" x="2" y="6" rx="6"/></svg>
+          </button>
+          <button class="pill-btn" data-persona="trader" title="Trader Terminal">
+            <svg class="lucide" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+          </button>
+          <button class="pill-btn" data-persona="corporate" title="Corporate Focus">
+            <svg class="lucide" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+          </button>
+          <button class="pill-btn active" data-persona="otaku" title="Otaku Zen">
+            <svg class="lucide" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5a3 3 0 1 1 3 3m-3-3a3 3 0 1 0-3 3m3-3v14m-3-4a3 3 0 1 0 6 0m-6 0a3 3 0 1 1-6-3m12 3a3 3 0 1 0-6-3"/></svg>
+          </button>
+        </div>
 
-      <div class="add-shortcut">
-        <h3>Add Shortcut</h3>
+        <button class="edit-btn" id="btnEditPanel" title="Open Customization Studio">
+          <span class="btn-icon-text">
+            <svg class="lucide" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+            Customize
+          </span>
+        </button>
+      </div>
+    </header>
 
-        <input id="name" placeholder="Name" />
+    <!-- Customization Studio Drawer Panel -->
+    <aside class="panel" id="settingsPanel">
+      <div class="panel-header">
+        <h3>Studio Customizer</h3>
+        <button class="panel-close-btn" id="btnClosePanel">&times;</button>
+      </div>
 
+      <!-- Persona Theme Selector -->
+      <div class="panel-section">
+        <label class="section-label">Persona Mode</label>
+        <div class="panel-persona-select">
+          <button class="panel-persona-btn" data-p="gamer">
+            <span class="btn-icon-text">
+              <svg class="lucide" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" x2="10" y1="12" y2="12"/><line x1="8" x2="8" y1="10" y2="14"/><line x1="15" x2="15.01" y1="13" y2="13"/><line x1="18" x2="18.01" y1="11" y2="11"/><rect width="20" height="12" x="2" y="6" rx="6"/></svg>
+              Gamer
+            </span>
+          </button>
+          <button class="panel-persona-btn" data-p="trader">
+            <span class="btn-icon-text">
+              <svg class="lucide" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+              Trader
+            </span>
+          </button>
+          <button class="panel-persona-btn" data-p="corporate">
+            <span class="btn-icon-text">
+              <svg class="lucide" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+              Corporate
+            </span>
+          </button>
+          <button class="panel-persona-btn active" data-p="otaku">
+            <span class="btn-icon-text">
+              <svg class="lucide" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5a3 3 0 1 1 3 3m-3-3a3 3 0 1 0-3 3m3-3v14m-3-4a3 3 0 1 0 6 0m-6 0a3 3 0 1 1-6-3m12 3a3 3 0 1 0-6-3"/></svg>
+              Otaku
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Wallpaper & Accent -->
+      <div class="panel-section">
+        <label class="section-label">Custom Wallpaper</label>
+        <input type="file" id="bgUpload" accept="image/*" />
+        <button class="reset-bg-btn" id="btnResetWallpaper">Reset to Default Wallpaper</button>
+      </div>
+
+      <!-- Particle Color -->
+      <div class="panel-section">
+        <label class="section-label">Particle Glow Color</label>
+        <input class="particleColorSelector" type="color" value="#ffffff" />
+      </div>
+
+      <!-- Add Bookmark Shortcut -->
+      <div class="panel-section add-shortcut">
+        <label class="section-label">Add Bookmark</label>
+        <input id="name" placeholder="Shortcut Name (e.g. GitHub)" />
         <input id="url" placeholder="https://" />
-
         <button id="saveShortcut">Add Shortcut</button>
       </div>
 
-      <input class="particleColorSelector" type="color">
-    </div>
-
-    <div class="main">
-      <div class="date-clock-box">
-        <div class="date"></div>
-        <div class="clock"></div>
-        <div class="weekDay">Saturday</div>
+      <!-- YouTube Music Playlist Setup -->
+      <div class="panel-section">
+        <label class="section-label">YouTube Music Station URL</label>
+        <input id="panelPlaylistUrl" placeholder="https://www.youtube.com/playlist?list=..." />
+        <button id="btnPanelLaunchMusic" class="panel-music-btn">
+          <span class="btn-icon-text">
+            <svg class="lucide" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            Launch Music Tab
+          </span>
+        </button>
       </div>
-      <div class="left-container container">
-        <div class="shortcuts-container"></div>
-      </div>
+    </aside>
 
-      <div class="right-container container">
-        <div class=""></div>
-      </div>
-    </div>
+    <!-- Main Workspace Layout -->
+    <main class="main">
+      <!-- Left Column: Bookmarks & Music Player Controller -->
+      <section class="left-container container">
+        <!-- Floating Music Player Widget Mount -->
+        <div id="music-widget-mount"></div>
 
-    <script src="newTab.js"></script>
+        <!-- Bookmarks Bar Shortcuts -->
+        <div class="shortcuts-container" title="Bookmarks Bar"></div>
+      </section>
+
+      <!-- Right Column: Date/Clock & Persona Widgets Dashboard -->
+      <section class="right-container container">
+        <!-- Aesthetic Clock & Date Box -->
+        <div class="date-clock-box">
+          <div class="clock">00:00</div>
+          <div class="date">01</div>
+          <div class="weekDay">MONDAY</div>
+        </div>
+
+        <!-- Persona Specific Widget Dashboard Mount (Gamer HUD / Trader Terminal / Corporate / Otaku) -->
+        <div id="persona-widget-mount"></div>
+      </section>
+    </main>
+
+    <!-- Scripts -->
+    <script src="icons.js"></script>
+    <script src="widgets.js"></script>
     <script src="music.js"></script>
+    <script src="newTab.js"></script>
   </body>
 </html>

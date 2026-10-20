@@ -1,0 +1,188 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Otaku Tab - Theme & Controls</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <div class="popup-container">
+      <!-- Header -->
+      <header class="popup-header">
+        <div class="brand">
+          <img src="icons/icon48.png" alt="Logo" class="brand-logo" />
+          <div class="brand-text">
+            <h2 class="title">OTAKU TAB</h2>
+            <span class="subtitle">Theme & Studio Controls</span>
+          </div>
+        </div>
+        <button id="btnOpenNewTab" class="icon-action-btn" title="Open New Tab">
+          <svg class="lucide" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></svg>
+        </button>
+      </header>
+
+      <!-- Section: Choose Persona Theme -->
+      <section class="section">
+        <div class="section-title">
+          <span>SELECT PERSONA THEME</span>
+          <span class="active-badge" id="activePersonaBadge">Otaku</span>
+        </div>
+        <div class="persona-grid">
+          <button class="persona-card" data-persona="gamer" id="personaGamer">
+            <span class="persona-icon">
+              <svg class="lucide" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" x2="10" y1="12" y2="12"/><line x1="8" x2="8" y1="10" y2="14"/><line x1="15" x2="15.01" y1="13" y2="13"/><line x1="18" x2="18.01" y1="11" y2="11"/><rect width="20" height="12" x="2" y="6" rx="6"/></svg>
+            </span>
+            <span class="persona-name">Gamer</span>
+            <span class="persona-sub">HUD & Radar</span>
+          </button>
+          <button class="persona-card" data-persona="trader" id="personaTrader">
+            <span class="persona-icon">
+              <svg class="lucide" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+            </span>
+            <span class="persona-name">Trader</span>
+            <span class="persona-sub">Crypto & Forex</span>
+          </button>
+          <button class="persona-card" data-persona="corporate" id="personaCorporate">
+            <span class="persona-icon">
+              <svg class="lucide" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+            </span>
+            <span class="persona-name">Corporate</span>
+            <span class="persona-sub">Tasks & Focus</span>
+          </button>
+          <button class="persona-card" data-persona="otaku" id="personaOtaku">
+            <span class="persona-icon">
+              <svg class="lucide" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5a3 3 0 1 1 3 3m-3-3a3 3 0 1 0-3 3m3-3v14m-3-4a3 3 0 1 0 6 0m-6 0a3 3 0 1 1-6-3m12 3a3 3 0 1 0-6-3"/></svg>
+            </span>
+            <span class="persona-name">Otaku</span>
+            <span class="persona-sub">Zen & Lofi</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- Section: YouTube Music Playback & Hidden Music Tab -->
+      <section class="section music-section">
+        <div class="section-title">
+          <span>YOUTUBE MUSIC CONTROLLER</span>
+          <div class="status-indicator-pill" id="musicStatusPill">
+            <span class="dot"></span>
+            <span id="musicStatusText">Disconnected</span>
+          </div>
+        </div>
+
+        <div class="mini-player-card">
+          <div class="mini-player-info">
+            <div class="mini-track-title" id="miniTrackTitle">No Song Playing</div>
+            <div class="mini-track-channel" id="miniTrackChannel">YouTube Station</div>
+          </div>
+          <div class="mini-player-btns">
+            <button class="ctrl-btn" id="popupBtnPrev" title="Previous Track">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
+            </button>
+            <button class="ctrl-btn play-pause-btn" id="popupBtnPlay" title="Play / Pause">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            </button>
+            <button class="ctrl-btn" id="popupBtnNext" title="Next Track">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Setup Public Playlist Tab -->
+        <div class="playlist-setup-box">
+          <label class="input-label" for="popupPlaylistUrl">Public YouTube Playlist or Video URL:</label>
+          <div class="input-with-button">
+            <input type="text" id="popupPlaylistUrl" placeholder="https://www.youtube.com/playlist?list=..." />
+            <button id="popupBtnLaunch" class="launch-btn" title="Launch Background Music Tab">
+              <span class="btn-icon-text">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+                Launch
+              </span>
+            </button>
+          </div>
+
+          <!-- Quick Presets -->
+          <div class="quick-presets-row">
+            <span class="presets-label">Presets:</span>
+            <button class="chip-btn" data-url="https://www.youtube.com/watch?v=jfKfPfyJRdk">
+              <span class="btn-icon-text">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v2"/><path d="M14 2v2"/><path d="M16 8a1 1 0 0 1 1 1v2a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V9a1 1 0 0 1 1-1h12Zm0 0h1a3 3 0 0 1 3 3v1a3 3 0 0 1-3 3h-1"/><path d="M6 2v2"/></svg>
+                Lofi
+              </span>
+            </button>
+            <button class="chip-btn" data-url="https://www.youtube.com/watch?v=4xDzrJKXOOY">
+              <span class="btn-icon-text">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.9 19.1C1 15.2 1 8.8 4.9 4.9"/><path d="M7.8 16.2c-2.3-2.3-2.3-6.1 0-8.5"/><circle cx="12" cy="12" r="2"/><path d="M16.2 7.8c2.3 2.3 2.3 6.1 0 8.5"/><path d="M19.1 4.9C23 8.8 23 15.1 19.1 19"/></svg>
+                Synthwave
+              </span>
+            </button>
+            <button class="chip-btn" data-url="https://www.youtube.com/watch?v=WPni755-Krg">
+              <span class="btn-icon-text">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5"/><line x1="13" x2="19" y1="19" y2="13"/><line x1="16" x2="20" y1="16" y2="20"/><line x1="19" x2="21" y1="21" y2="19"/><polyline points="14.5 6.5 18 3 21 3 21 6 17.5 9.5"/><line x1="5" x2="9" y1="14" y2="18"/><line x1="7" x2="4" y1="17" y2="20"/><line x1="3" x2="5" y1="19" y2="21"/></svg>
+                Gaming OST
+              </span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section: Widget Toggles -->
+      <section class="section">
+        <div class="section-title">
+          <span>WIDGET VISIBILITY</span>
+        </div>
+        <div class="toggle-list">
+          <label class="toggle-row">
+            <span class="btn-icon-text">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+              Music Player Widget
+            </span>
+            <input type="checkbox" id="toggleMusic" checked />
+            <span class="toggle-switch"></span>
+          </label>
+          <label class="toggle-row">
+            <span class="btn-icon-text">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" x2="18" y1="20" y2="10"/><line x1="12" x2="12" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="14"/></svg>
+              Persona Dashboard Widget
+            </span>
+            <input type="checkbox" id="toggleWidgets" checked />
+            <span class="toggle-switch"></span>
+          </label>
+          <label class="toggle-row">
+            <span class="btn-icon-text">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="M20 12h2"/><path d="m19.07 4.93-1.41 1.41"/><path d="M15.947 12.65a4 4 0 0 0-5.925-4.128"/><path d="M13 22H7a5 5 0 1 1 4.9-6H13a3 3 0 0 1 0 6Z"/></svg>
+              Live Weather Widget
+            </span>
+            <input type="checkbox" id="toggleWeather" checked />
+            <span class="toggle-switch"></span>
+          </label>
+          <label class="toggle-row">
+            <span class="btn-icon-text">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+              Web Search Omnibox
+            </span>
+            <input type="checkbox" id="toggleSearch" checked />
+            <span class="toggle-switch"></span>
+          </label>
+          <label class="toggle-row">
+            <span class="btn-icon-text">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg>
+              Floating Particles Effect
+            </span>
+            <input type="checkbox" id="toggleParticles" checked />
+            <span class="toggle-switch"></span>
+          </label>
+          <label class="toggle-row">
+            <span class="btn-icon-text">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg>
+              Bookmarks Shortcuts
+            </span>
+            <input type="checkbox" id="toggleShortcuts" checked />
+            <span class="toggle-switch"></span>
+          </label>
+        </div>
+      </section>
+    </div>
+
+    <script src="popup.js"></script>
+  </body>
+</html>
