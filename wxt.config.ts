@@ -8,7 +8,7 @@ export default defineConfig({
   manifest: {
     name: "Otaku Tab - Aesthetic Theme & Music Studio",
     description: "Customize your new tab with wallpapers, widgets for Gamers, Traders & Corporate, and background YouTube music controller.",
-    version: "1.2.0",
+    version: "2.0.0",
     permissions: [
       "storage",
       "bookmarks",
