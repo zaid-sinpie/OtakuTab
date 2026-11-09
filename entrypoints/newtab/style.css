@@ -1,0 +1,70 @@
+@font-face {
+  font-family: "Orbitron";
+  src: url("/fonts/Orbitron-VariableFont_wght.ttf") format("truetype");
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Audiowide";
+  src: url("/fonts/Audiowide-Regular.ttf") format("truetype");
+  font-weight: normal;
+  font-display: swap;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 330 85% 60%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 330 85% 60%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+    --radius: 1rem;
+  }
+
+  .persona-gamer {
+    --primary: 186 100% 50%;
+    --accent: 271 91% 65%;
+  }
+
+  .persona-trader {
+    --primary: 152 76% 48%;
+    --accent: 38 92% 50%;
+  }
+
+  .persona-corporate {
+    --primary: 217 91% 60%;
+    --accent: 173 80% 40%;
+  }
+
+  .persona-otaku {
+    --primary: 330 85% 60%;
+    --accent: 280 87% 65%;
+  }
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #030712;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  min-height: 100vh;
+}

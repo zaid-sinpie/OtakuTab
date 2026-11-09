@@ -1,2 +1,6 @@
+node_modules
+.output
+.wxt
+dist
 default.jpg
 default1.png
