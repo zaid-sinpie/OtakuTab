@@ -163,7 +163,11 @@ export default defineBackground(() => {
       }
 
       case "LAUNCH_PLAYLIST_TAB": {
-        const targetUrl = formatPlaylistUrl(request.url || "https://www.youtube.com/watch?v=jfKfPfyJRdk");
+        const rawUrl = request.url ? request.url.trim() : "";
+        if (!rawUrl) {
+          return { success: false, error: "No playlist URL provided" };
+        }
+        const targetUrl = formatPlaylistUrl(rawUrl);
         chrome.storage.local.set({ musicPlaylistUrl: targetUrl });
 
         if (musicTabId) {

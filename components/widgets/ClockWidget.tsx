@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { WidgetWrapper } from "./WidgetWrapper";
 
-export const ClockWidget: React.FC<{ x?: number; y?: number }> = ({ x, y }) => {
+export const ClockWidget: React.FC<{ id?: string; x?: number; y?: number }> = ({ id, x, y }) => {
   const [time, setTime] = useState("");
   const [date, setDate] = useState("");
   const [weekDay, setWeekDay] = useState("");
@@ -27,7 +27,7 @@ export const ClockWidget: React.FC<{ x?: number; y?: number }> = ({ x, y }) => {
   }, []);
 
   return (
-    <WidgetWrapper x={x} y={y} noHeader className="text-center py-6 px-4">
+    <WidgetWrapper id={id} x={x} y={y} noHeader className="w-fit text-center py-4 px-6 min-w-[200px]">
       <div className="font-orbitron text-5xl sm:text-6xl font-black tracking-tight text-white drop-shadow-md">
         {time}
       </div>

@@ -11,17 +11,25 @@ export const CorporateWidgets: React.FC = () => {
   const [isRunning, setIsRunning] = useState(false);
   const [mode, setMode] = useState<"focus" | "break">("focus");
 
-  const [todos, setTodos] = useState<TodoItem[]>([
-    { id: 1, text: "Review sprint deliverables", done: false },
-    { id: 2, text: "Sync design tokens", done: true },
-  ]);
+  const [todos, setTodos] = useState<TodoItem[]>([]);
   const [newTodo, setNewTodo] = useState("");
   const [notes, setNotes] = useState("");
   const audioCtxRef = useRef<AudioContext | null>(null);
 
   useEffect(() => {
     chrome.storage.local.get(["corporateTodos", "scratchpadNotes"], (res) => {
-      if (Array.isArray(res.corporateTodos)) setTodos(res.corporateTodos);
+      if (Array.isArray(res.corporateTodos)) {
+        const isLegacyDefaults =
+          res.corporateTodos.length === 2 &&
+          res.corporateTodos[0]?.text === "Review sprint deliverables" &&
+          res.corporateTodos[1]?.text === "Sync design tokens";
+        if (isLegacyDefaults) {
+          setTodos([]);
+          chrome.storage.local.set({ corporateTodos: [] });
+        } else {
+          setTodos(res.corporateTodos);
+        }
+      }
       if (typeof res.scratchpadNotes === "string") setNotes(res.scratchpadNotes);
     });
   }, []);
@@ -183,30 +191,36 @@ export const CorporateWidgets: React.FC = () => {
           </form>
 
           <div className="flex flex-col gap-1.5 overflow-y-auto pr-1">
-            {todos.map((t) => (
-              <div
-                key={t.id}
-                className="group flex items-center justify-between rounded-lg border border-white/5 bg-white/5 px-2.5 py-1.5 text-xs transition hover:bg-white/10"
-              >
-                <label className="flex items-center gap-2 cursor-pointer flex-1">
-                  <input
-                    type="checkbox"
-                    checked={t.done}
-                    onChange={() => toggleTodo(t.id)}
-                    className="rounded border-white/20 bg-white/10 text-teal-500 focus:ring-0"
-                  />
-                  <span className={t.done ? "line-through text-white/40" : "text-white/90"}>
-                    {t.text}
-                  </span>
-                </label>
-                <button
-                  onClick={() => deleteTodo(t.id)}
-                  className="opacity-0 group-hover:opacity-100 text-white/40 hover:text-rose-400 transition"
-                >
-                  <Trash2 className="w-3 h-3" />
-                </button>
+            {todos.length === 0 ? (
+              <div className="rounded-lg border border-dashed border-white/10 p-3 text-center text-xs text-white/40">
+                No objectives yet. Add your daily tasks above!
               </div>
-            ))}
+            ) : (
+              todos.map((t) => (
+                <div
+                  key={t.id}
+                  className="group flex items-center justify-between rounded-lg border border-white/5 bg-white/5 px-2.5 py-1.5 text-xs transition hover:bg-white/10"
+                >
+                  <label className="flex items-center gap-2 cursor-pointer flex-1">
+                    <input
+                      type="checkbox"
+                      checked={t.done}
+                      onChange={() => toggleTodo(t.id)}
+                      className="rounded border-white/20 bg-white/10 text-teal-500 focus:ring-0"
+                    />
+                    <span className={t.done ? "line-through text-white/40" : "text-white/90"}>
+                      {t.text}
+                    </span>
+                  </label>
+                  <button
+                    onClick={() => deleteTodo(t.id)}
+                    className="opacity-0 group-hover:opacity-100 text-white/40 hover:text-rose-400 transition"
+                  >
+                    <Trash2 className="w-3 h-3" />
+                  </button>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </WidgetWrapper>

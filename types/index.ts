@@ -3,7 +3,6 @@ export type PersonaType = "gamer" | "trader" | "corporate" | "otaku";
 export interface WidgetSettings {
   showMusic: boolean;
   showWidgets: boolean;
-  showWeather: boolean;
   showSearch: boolean;
   showShortcuts: boolean;
   showParticles: boolean;
@@ -46,9 +45,8 @@ export interface BookmarkItem {
   url: string;
 }
 
-export interface WeatherData {
-  temp: number;
-  condition: string;
-  code: number;
-  city: string;
+export interface UserPlaylist {
+  id: string;
+  name: string;
+  url: string;
 }

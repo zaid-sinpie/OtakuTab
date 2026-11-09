@@ -12,6 +12,7 @@ interface CustomizerDrawerProps {
   particleColor: string;
   onParticleColorChange: (c: string) => void;
   onWallpaperChange: (src: string) => void;
+  onResetLayout?: () => void;
 }
 
 export const CustomizerDrawer: React.FC<CustomizerDrawerProps> = ({
@@ -22,6 +23,7 @@ export const CustomizerDrawer: React.FC<CustomizerDrawerProps> = ({
   particleColor,
   onParticleColorChange,
   onWallpaperChange,
+  onResetLayout,
 }) => {
   const [bookmarkName, setBookmarkName] = useState("");
   const [bookmarkUrl, setBookmarkUrl] = useState("");
@@ -99,8 +101,11 @@ export const CustomizerDrawer: React.FC<CustomizerDrawerProps> = ({
     if (chrome?.bookmarks?.getTree) {
       chrome.bookmarks.getTree((tree) => {
         const bar =
-          tree[0]?.children?.find((node) => node.title === "Bookmarks bar") ||
-          tree[0]?.children?.[0];
+          tree[0]?.children?.find(
+            (node) =>
+              node.id === "1" ||
+              (node.title && node.title.toLowerCase().includes("bookmark"))
+          ) || tree[0]?.children?.[0];
         if (!bar) return;
 
         chrome.bookmarks.create({
@@ -210,6 +215,16 @@ export const CustomizerDrawer: React.FC<CustomizerDrawerProps> = ({
             >
               <RotateCcw className="w-3 h-3" /> Reset to Default Wallpaper
             </Button>
+            {onResetLayout && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={onResetLayout}
+                className="gap-1.5 w-full text-xs"
+              >
+                <RotateCcw className="w-3 h-3" /> Reset Widget Layout
+              </Button>
+            )}
           </div>
         </div>
 

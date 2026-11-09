@@ -10,10 +10,6 @@ import {
   SkipBack,
   SkipForward,
   Radio,
-  Coffee,
-  Disc,
-  Flame,
-  CloudSun,
   Search,
   Sparkles,
   Bookmark,
@@ -23,14 +19,13 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { PersonaType, WidgetSettings, MusicStatus } from "@/types";
+import { PersonaType, WidgetSettings, MusicStatus, UserPlaylist } from "@/types";
 
 export const Popup: React.FC = () => {
   const [activePersona, setActivePersona] = useState<PersonaType>("otaku");
   const [widgetSettings, setWidgetSettings] = useState<WidgetSettings>({
     showMusic: true,
     showWidgets: true,
-    showWeather: true,
     showSearch: true,
     showShortcuts: true,
     showParticles: true,
@@ -47,17 +42,40 @@ export const Popup: React.FC = () => {
     thumbnail: "",
   });
   const [playlistUrl, setPlaylistUrl] = useState("");
+  const [userPlaylists, setUserPlaylists] = useState<UserPlaylist[]>([]);
+  const [hasBookmarks, setHasBookmarks] = useState(true);
   const [isLaunching, setIsLaunching] = useState(false);
 
   useEffect(() => {
     chrome.storage.local.get(
-      ["activePersona", "widgetSettings", "musicPlaylistUrl"],
+      ["activePersona", "widgetSettings", "musicPlaylistUrl", "userPlaylists", "customShortcuts"],
       (res) => {
         if (res.activePersona) setActivePersona(res.activePersona);
         if (res.widgetSettings) {
           setWidgetSettings((prev) => ({ ...prev, ...res.widgetSettings }));
         }
         if (res.musicPlaylistUrl) setPlaylistUrl(res.musicPlaylistUrl);
+        if (Array.isArray(res.userPlaylists)) setUserPlaylists(res.userPlaylists);
+
+        const customs = Array.isArray(res.customShortcuts) ? res.customShortcuts : [];
+        if (!chrome?.bookmarks?.getTree) {
+          setHasBookmarks(customs.length > 0);
+        } else {
+          chrome.bookmarks.getTree((tree) => {
+            if (!tree || !tree[0]) {
+              setHasBookmarks(customs.length > 0);
+              return;
+            }
+            const bar =
+              tree[0].children?.find(
+                (node) =>
+                  node.id === "1" ||
+                  (node.title && node.title.toLowerCase().includes("bookmark"))
+              ) || tree[0].children?.[0];
+            const count = (bar?.children?.filter((c) => Boolean(c.url))?.length || 0) + customs.length;
+            setHasBookmarks(count > 0);
+          });
+        }
       }
     );
 
@@ -91,7 +109,10 @@ export const Popup: React.FC = () => {
 
   const handlePlayPause = () => {
     if (!musicStatus.connected) {
-      handleLaunchMusic(playlistUrl || "https://www.youtube.com/watch?v=jfKfPfyJRdk");
+      const target = playlistUrl || userPlaylists[0]?.url;
+      if (target) {
+        handleLaunchMusic(target);
+      }
       return;
     }
     const nextCommand = musicStatus.isPlaying ? "PAUSE" : "PLAY";
@@ -110,7 +131,8 @@ export const Popup: React.FC = () => {
   };
 
   const handleLaunchMusic = (url: string) => {
-    const target = url.trim() || "https://www.youtube.com/watch?v=jfKfPfyJRdk";
+    const target = url.trim() || userPlaylists[0]?.url;
+    if (!target) return;
     setIsLaunching(true);
     chrome.storage.local.set({ musicPlaylistUrl: target });
     chrome.runtime.sendMessage(
@@ -270,39 +292,25 @@ export const Popup: React.FC = () => {
             </Button>
           </div>
 
-          <div className="flex items-center gap-1.5 pt-1">
-            <span className="text-[10px] text-white/40">Presets:</span>
-            <button
-              onClick={() => {
-                const u = "https://www.youtube.com/watch?v=jfKfPfyJRdk";
-                setPlaylistUrl(u);
-                handleLaunchMusic(u);
-              }}
-              className="flex items-center gap-1 rounded-md border border-white/10 bg-white/5 px-2 py-0.5 text-[10px] text-white/80 hover:bg-white/10 transition"
-            >
-              <Coffee className="w-2.5 h-2.5 text-amber-300" /> Lofi
-            </button>
-            <button
-              onClick={() => {
-                const u = "https://www.youtube.com/watch?v=4xDzrJKXOOY";
-                setPlaylistUrl(u);
-                handleLaunchMusic(u);
-              }}
-              className="flex items-center gap-1 rounded-md border border-white/10 bg-white/5 px-2 py-0.5 text-[10px] text-white/80 hover:bg-white/10 transition"
-            >
-              <Disc className="w-2.5 h-2.5 text-pink-300" /> Synthwave
-            </button>
-            <button
-              onClick={() => {
-                const u = "https://www.youtube.com/watch?v=WPni755-Krg";
-                setPlaylistUrl(u);
-                handleLaunchMusic(u);
-              }}
-              className="flex items-center gap-1 rounded-md border border-white/10 bg-white/5 px-2 py-0.5 text-[10px] text-white/80 hover:bg-white/10 transition"
-            >
-              <Flame className="w-2.5 h-2.5 text-cyan-300" /> Gaming
-            </button>
-          </div>
+          {userPlaylists.length > 0 && (
+            <div className="flex flex-wrap items-center gap-1.5 pt-1">
+              <span className="text-[10px] text-white/40">Playlists:</span>
+              {userPlaylists.map((pl) => (
+                <button
+                  key={pl.id}
+                  onClick={() => {
+                    setPlaylistUrl(pl.url);
+                    handleLaunchMusic(pl.url);
+                  }}
+                  className="flex items-center gap-1 rounded-md border border-white/10 bg-white/5 px-2 py-0.5 text-[10px] text-white/80 hover:bg-white/10 transition"
+                  title={pl.url}
+                >
+                  <Radio className="w-2.5 h-2.5 text-primary" />
+                  <span className="max-w-[70px] truncate">{pl.name}</span>
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
@@ -334,16 +342,6 @@ export const Popup: React.FC = () => {
 
           <div className="flex items-center justify-between text-xs">
             <span className="flex items-center gap-2 text-white/80">
-              <CloudSun className="w-3.5 h-3.5 text-amber-300" /> Weather Omnibox
-            </span>
-            <Switch
-              checked={widgetSettings.showWeather}
-              onCheckedChange={(val) => handleToggleWidget("showWeather", val)}
-            />
-          </div>
-
-          <div className="flex items-center justify-between text-xs">
-            <span className="flex items-center gap-2 text-white/80">
               <Search className="w-3.5 h-3.5 text-blue-400" /> Search Omnibox
             </span>
             <Switch
@@ -362,14 +360,21 @@ export const Popup: React.FC = () => {
             />
           </div>
 
-          <div className="flex items-center justify-between text-xs">
-            <span className="flex items-center gap-2 text-white/80">
-              <Bookmark className="w-3.5 h-3.5 text-emerald-400" /> Bookmarks Bar
-            </span>
-            <Switch
-              checked={widgetSettings.showShortcuts}
-              onCheckedChange={(val) => handleToggleWidget("showShortcuts", val)}
-            />
+          <div className="flex flex-col gap-1.5">
+            <div className="flex items-center justify-between text-xs">
+              <span className="flex items-center gap-2 text-white/80">
+                <Bookmark className="w-3.5 h-3.5 text-emerald-400" /> Bookmarks Bar
+              </span>
+              <Switch
+                checked={widgetSettings.showShortcuts}
+                onCheckedChange={(val) => handleToggleWidget("showShortcuts", val)}
+              />
+            </div>
+            {!hasBookmarks && (
+              <p className="rounded-lg border border-amber-500/20 bg-amber-500/10 px-2 py-1 text-[10px] text-amber-200/90 leading-normal">
+                No bookmarks added yet. Add at least one bookmark in Chrome to make this widget visible.
+              </p>
+            )}
           </div>
         </div>
       </section>

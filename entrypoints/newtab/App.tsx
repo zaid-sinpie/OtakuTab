@@ -6,7 +6,6 @@ import {
   Flower2,
   Sliders,
 } from "lucide-react";
-import { WeatherWidget } from "@/components/widgets/WeatherWidget";
 import { SearchOmnibox } from "@/components/widgets/SearchOmnibox";
 import { ClockWidget } from "@/components/widgets/ClockWidget";
 import { MusicWidget } from "@/components/widgets/MusicWidget";
@@ -17,14 +16,16 @@ import { GamerWidgets } from "@/components/widgets/GamerWidgets";
 import { TraderWidgets } from "@/components/widgets/TraderWidgets";
 import { CorporateWidgets } from "@/components/widgets/CorporateWidgets";
 import { OtakuWidgets } from "@/components/widgets/OtakuWidgets";
+import { WidgetWrapper } from "@/components/widgets/WidgetWrapper";
+import { WidgetProvider, useWidgetContext } from "@/components/widgets/WidgetContext";
 import { PersonaType, WidgetSettings } from "@/types";
 
-export const App: React.FC = () => {
+const AppContent: React.FC = () => {
+  const { resetPositions } = useWidgetContext();
   const [activePersona, setActivePersona] = useState<PersonaType>("otaku");
   const [widgetSettings, setWidgetSettings] = useState<WidgetSettings>({
     showMusic: true,
     showWidgets: true,
-    showWeather: true,
     showSearch: true,
     showShortcuts: true,
     showParticles: true,
@@ -32,6 +33,17 @@ export const App: React.FC = () => {
   const [wallpaper, setWallpaper] = useState<string>("");
   const [particleColor, setParticleColor] = useState<string>("rgba(255, 255, 255, 0.4)");
   const [isCustomizerOpen, setIsCustomizerOpen] = useState<boolean>(false);
+  const [defaultRightX, setDefaultRightX] = useState<number>(() =>
+    typeof window !== "undefined" ? Math.max(440, window.innerWidth - 740) : 880
+  );
+
+  useEffect(() => {
+    const handleResize = () => {
+      setDefaultRightX(Math.max(440, window.innerWidth - 740));
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     chrome.storage.local.get(
@@ -87,32 +99,26 @@ export const App: React.FC = () => {
 
   const personaClass = `persona-${activePersona}`;
 
-  const defaultWallpaper =
-    "https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=1920&q=80";
-
   return (
     <div
       className={`relative min-h-screen w-full flex flex-col justify-between p-6 sm:p-8 bg-cover bg-center bg-no-repeat transition-all duration-500 ${personaClass}`}
       style={{
-        backgroundImage: `url(${wallpaper || defaultWallpaper})`,
+        backgroundColor: "#0a0e17",
+        backgroundImage: wallpaper ? `url(${wallpaper})` : undefined,
       }}
     >
-      <div className="absolute inset-0 bg-black/20 pointer-events-none" />
+      {wallpaper && <div className="absolute inset-0 bg-black/20 pointer-events-none" />}
 
       {widgetSettings.showParticles && <ParticlesCanvas color={particleColor} />}
 
-      <header className="relative z-10 flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center gap-4">
-          {widgetSettings.showWeather && <WeatherWidget />}
-        </div>
-
+      <header className="relative z-30 flex items-center justify-between min-h-[48px]">
         {widgetSettings.showSearch && (
-          <div className="flex-1 flex justify-center max-w-xl mx-auto">
+          <div className="absolute left-1/2 -translate-x-1/2 flex justify-center w-full max-w-md px-4 pointer-events-auto">
             <SearchOmnibox />
           </div>
         )}
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 ml-auto">
           <div className="flex items-center rounded-2xl border border-white/15 bg-black/25 p-1 backdrop-blur-md shadow-lg">
             <button
               onClick={() => handleSelectPersona("gamer")}
@@ -170,27 +176,34 @@ export const App: React.FC = () => {
         </div>
       </header>
 
-      <main className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-6 my-auto py-8">
-        <section className="lg:col-span-5 flex flex-col gap-6 justify-center">
-          {widgetSettings.showMusic && <MusicWidget x={1} y={1} />}
-          {widgetSettings.showShortcuts && <BookmarksWidget x={1} y={2} />}
-        </section>
+      <main className="relative z-10 flex-1 w-full min-h-[calc(100vh-140px)]">
+        {widgetSettings.showMusic && (
+          <MusicWidget id="music" x={36} y={100} />
+        )}
 
-        <section className="lg:col-span-7 flex flex-col gap-6 justify-center">
-          <ClockWidget x={1} y={1} />
+        {widgetSettings.showShortcuts && (
+          <BookmarksWidget id="shortcuts" x={36} y={450} />
+        )}
 
-          {widgetSettings.showWidgets && (
-            <div className="w-full">
-              {activePersona === "gamer" && <GamerWidgets />}
-              {activePersona === "trader" && <TraderWidgets />}
-              {activePersona === "corporate" && <CorporateWidgets />}
-              {activePersona === "otaku" && <OtakuWidgets />}
-            </div>
-          )}
-        </section>
+        <ClockWidget id="clock" x={defaultRightX} y={100} />
+
+        {widgetSettings.showWidgets && (
+          <WidgetWrapper
+            id="dashboard"
+            x={defaultRightX}
+            y={260}
+            noHeader
+            className="w-[660px] xl:w-[700px] max-w-[calc(100vw-48px)]"
+          >
+            {activePersona === "gamer" && <GamerWidgets />}
+            {activePersona === "trader" && <TraderWidgets />}
+            {activePersona === "corporate" && <CorporateWidgets />}
+            {activePersona === "otaku" && <OtakuWidgets />}
+          </WidgetWrapper>
+        )}
       </main>
 
-      <footer className="relative z-10 flex items-center justify-between text-[11px] text-white/30 pt-4">
+      <footer className="fixed bottom-3 left-6 right-6 z-10 flex items-center justify-between text-[11px] text-white/30 pointer-events-none">
         <span>Otaku Tab v1.2</span>
         <span className="font-orbitron tracking-widest uppercase">
           Aesthetic Studio &amp; Lo-Fi Terminal
@@ -205,7 +218,16 @@ export const App: React.FC = () => {
         particleColor={particleColor}
         onParticleColorChange={handleParticleColorChange}
         onWallpaperChange={setWallpaper}
+        onResetLayout={resetPositions}
       />
     </div>
+  );
+};
+
+export const App: React.FC = () => {
+  return (
+    <WidgetProvider>
+      <AppContent />
+    </WidgetProvider>
   );
 };

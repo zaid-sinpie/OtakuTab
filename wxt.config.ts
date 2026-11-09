@@ -19,8 +19,7 @@ export default defineConfig({
     host_permissions: [
       "*://*.youtube.com/*",
       "*://api.binance.com/*",
-      "*://api.coingecko.com/*",
-      "*://api.open-meteo.com/*"
+      "*://api.coingecko.com/*"
     ],
     icons: {
       16: "icons/icon16.png",
