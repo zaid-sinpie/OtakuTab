@@ -38,11 +38,19 @@ const AppContent: React.FC = () => {
   );
 
   useEffect(() => {
+    let resizeTimer: number | null = null;
     const handleResize = () => {
-      setDefaultRightX(Math.max(440, window.innerWidth - 740));
+      if (resizeTimer) cancelAnimationFrame(resizeTimer);
+      resizeTimer = requestAnimationFrame(() => {
+        const nextX = Math.max(440, window.innerWidth - 740);
+        setDefaultRightX((prev) => (prev !== nextX ? nextX : prev));
+      });
     };
     window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      if (resizeTimer) cancelAnimationFrame(resizeTimer);
+    };
   }, []);
 
   useEffect(() => {

@@ -23,6 +23,7 @@ export const TraderWidgets: React.FC = () => {
   const [convertSymbol, setConvertSymbol] = useState<string>("BTC");
 
   const fetchPrices = useCallback(() => {
+    if (document.hidden) return;
     setIsFetching(true);
     fetch('https://api.binance.com/api/v3/ticker/24hr?symbols=["BTCUSDT","ETHUSDT","SOLUSDT","BNBUSDT"]')
       .then((res) => res.json())
@@ -50,8 +51,23 @@ export const TraderWidgets: React.FC = () => {
 
   useEffect(() => {
     fetchPrices();
-    const interval = setInterval(fetchPrices, 30000);
-    return () => clearInterval(interval);
+    const interval = setInterval(() => {
+      if (!document.hidden) {
+        fetchPrices();
+      }
+    }, 30000);
+
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        fetchPrices();
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
   }, [fetchPrices]);
 
   const getMarketStatus = () => {

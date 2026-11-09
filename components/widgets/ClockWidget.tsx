@@ -9,21 +9,36 @@ export const ClockWidget: React.FC<{ id?: string; x?: number; y?: number }> = ({
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
-      setTime(
-        now.toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        })
-      );
-      setDate(String(now.getDate()).padStart(2, "0"));
-      setWeekDay(
-        now.toLocaleDateString("en-US", { weekday: "long" }).toUpperCase()
-      );
+      const newTime = now.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+      const newDate = String(now.getDate()).padStart(2, "0");
+      const newWeekDay = now.toLocaleDateString("en-US", { weekday: "long" }).toUpperCase();
+
+      setTime((prev) => (prev !== newTime ? newTime : prev));
+      setDate((prev) => (prev !== newDate ? newDate : prev));
+      setWeekDay((prev) => (prev !== newWeekDay ? newWeekDay : prev));
     };
 
     updateTime();
-    const timer = setInterval(updateTime, 1000);
-    return () => clearInterval(timer);
+    const timer = setInterval(() => {
+      if (!document.hidden) {
+        updateTime();
+      }
+    }, 10000);
+
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        updateTime();
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      clearInterval(timer);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
   }, []);
 
   return (

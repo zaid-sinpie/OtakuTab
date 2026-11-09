@@ -62,9 +62,10 @@ export default defineContentScript({
       } catch {}
     }
 
-    function attachVideoListeners() {
+    function attachVideoListeners(): boolean {
       const video = document.querySelector("video") as (HTMLVideoElement & { __otakuAttached?: boolean }) | null;
-      if (!video || video.__otakuAttached) return;
+      if (!video) return false;
+      if (video.__otakuAttached) return true;
       video.__otakuAttached = true;
 
       ["play", "pause", "ended", "volumechange", "loadeddata"].forEach((evt) => {
@@ -72,18 +73,32 @@ export default defineContentScript({
           sendStatusUpdate();
         });
       });
+      return true;
     }
 
-    const observer = new MutationObserver(() => {
-      attachVideoListeners();
-    });
-    observer.observe(document.documentElement, { childList: true, subtree: true });
+    let observer: MutationObserver | null = null;
+
+    function startObserving() {
+      if (observer) return;
+      observer = new MutationObserver(() => {
+        if (attachVideoListeners() && observer) {
+          observer.disconnect();
+          observer = null;
+        }
+      });
+      observer.observe(document.documentElement, { childList: true, subtree: true });
+    }
+
+    if (!attachVideoListeners()) {
+      startObserving();
+    }
 
     window.addEventListener("yt-navigate-finish", () => {
       setTimeout(sendStatusUpdate, 500);
+      if (!attachVideoListeners()) {
+        startObserving();
+      }
     });
-
-    attachVideoListeners();
 
     setTimeout(() => {
       if (window.location.pathname.includes("/playlist")) {
